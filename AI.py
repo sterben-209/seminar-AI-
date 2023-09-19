@@ -1,5 +1,7 @@
+
 import mediapipe as mp 
-import cv2 
+from mediapipe.task import python
+from mediapipe.task.python import vision 
 
 
 cap = cv2.VideoCapture(0) # chọn cam máy  
