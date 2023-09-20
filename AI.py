@@ -1,6 +1,5 @@
-
 import mediapipe as mp 
-from mediapipe.task import python
-from mediapipe.task.python import vision 
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision 
 
 
