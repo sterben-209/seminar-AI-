@@ -1,77 +1,61 @@
-import random
-import cv2
+import mediapipe as mp
 import hand_detection_lib as handlib
 import os
+import cv2
 
-detector = handlib.handDetector()
-cam = cv2.VideoCapture(0)
+class HandDetector:
+    def __init__(self):
+        self.mpHands = mp.solutions.hands
+        self.hands = self.mpHands.Hands()
+        self.mpDraw = mp.solutions.drawing_utils
 
-# def draw_results(frame, user_draw):
-    # Cho máy sinh ra lựa chọn ngẫu nhiên
-    # com_draw = random.randint(0,2)
+    def findHands(self, img):
+        # Chuyển từ BGR thành RGB
+        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    # Vẽ hình, viết chữ theo user_draw
-    # frame = cv2.putText(frame, 'You', (50, 50), cv2.FONT_HERSHEY_SIMPLEX,
-    #                     1, (0, 255, 0), 2, cv2.LINE_AA)
+        # Đưa vào thư viện mediapipe
+        results = self.hands.process(imgRGB)
+        hand_landmarks = []
 
-    # s_img = cv2.imread(os.path.join("pix", str(user_draw) + ".png"))
-    # x_offset = 50
-    # y_offset = 100
-    # frame[y_offset:y_offset + s_img.shape[0], x_offset:x_offset + s_img.shape[1]] = s_img
+        if results.multi_hand_landmarks:
+            # Vẽ landmark cho các bàn tay
+            for handlm in results.multi_hand_landmarks:
+                self.mpDraw.draw_landmarks(img, handlm, self.mpHands.HAND_CONNECTIONS)
+            # Trích ra các toạ độ của khớp của các ngón tay
+            firstHand = results.multi_hand_landmarks[0]
+            h,w,_ = img.shape
+            for hand_landmarks in results.multi_hand_landmarks:
+                # Lấy vị trí của ngón trỏ
+                index_finger_landmark = hand_landmarks.landmark[8]
+                x, y = index_finger_landmark.x, index_finger_landmark.y
+                print(x,y)
+        return img, hand_landmarks, x , y
 
-    # Vẽ hình, viết chữ theo com_draw
-    # frame = cv2.putText(frame, 'Computer', (400, 50), cv2.FONT_HERSHEY_SIMPLEX,
-    #                     1, (0, 0, 255), 2, cv2.LINE_AA)
-    # s_img = cv2.imread(os.path.join("pix",str(com_draw) + ".png"))
-    # x_offset = 400
-    # y_offset = 100
-    # frame[y_offset:y_offset + s_img.shape[0], x_offset:x_offset + s_img.shape[1]] = s_img
+    def draw_hand(self, x, y, Flippedframe):
+        cv2.circle(Flippedframe, (x, y), 5, (0, 0, 255), -1)
 
-    # Kiểm tra và hiển thị kết quá
-    # if user_draw == com_draw:
-    #     result="DRAW!"
-    # elif (user_draw==0) and (com_draw==1):
-    #     result="YOU WIN!"
-    # elif (user_draw==1) and (com_draw==2):
-    #     result="YOU WIN!"
-    # elif (user_draw==2) and (com_draw==0):
-    #     result="YOU WIN!"
-    # else:
-    #     result="YOU LOSE!"
+# khởi tạo camera
+cap = cv2.VideoCapture(0)
 
-    # frame = cv2.putText(frame, result, (50, 550), cv2.FONT_HERSHEY_SIMPLEX,
-    #                     1, (255, 0, 255), 2, cv2.LINE_AA)
+# khởi tạo đối tượng HandDetector
+handDetector = HandDetector()
 
+while True :
+    ret , frame = cap.read()
+    Flippedframe = cv2.flip(frame,1)
 
-while True:
-    ret, frame = cam.read()
-    frame = cv2.flip(frame, 1)
+    # tìm kiếm bàn tay trong ảnh
+    frame, hand_landmarks, x, y = handDetector.findHands(Flippedframe)
 
-    # Đưa hình ảnh vào detector
-    frame, hand_lms = detector.findHands(frame)
-    # n_fingers = detector.count_finger(hand_lms)
+    # vẽ đường đi của ngón trỏ lên ảnh
+    handDetector.draw_hand(x, y, Flippedframe)
 
-    # user_draw = -1 # 0: Lá, 1: Đấm, 2 Kéo
-    # if n_fingers==0:
-    #     user_draw = 1
-    # elif n_fingers==2:
-    #     user_draw = 2
-    # elif n_fingers ==5:
-    #     user_draw = 0
-    # elif n_fingers!=-1:
-    #     print(" Chỉ chấp nhận Đấm Lá Kéo")
-    # else:
-    #     print("Không có bàn tay trong hình")
+    # show màn hình quay được 
+    cv2.imshow("MediaPipe Camera Preview", Flippedframe)
 
-
-    cv2.imshow("game", frame)
-    if cv2.waitKey(1)==ord("q"):
+    # nút tắt chương trình 
+    if cv2.waitKey(1) == ord("q"):
         break
-    # elif key == ord(" "):
-    #     draw_results(frame, user_draw)
-    #     cv2.imshow("game", frame)
-    #     cv2.waitKey()
 
-
-cam.release()
+cap.release()
 cv2.destroyAllWindows()
