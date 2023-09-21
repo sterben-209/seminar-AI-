@@ -1,13 +1,31 @@
 import mediapipe as mp
 import hand_detection_lib as handlib
-import os
 import cv2
 
-class HandDetector:
+x = 0.0
+y = 0.0
+class handDetector():
     def __init__(self):
         self.mpHands = mp.solutions.hands
         self.hands = self.mpHands.Hands()
         self.mpDraw = mp.solutions.drawing_utils
+
+
+    def draw(self, img):
+        while True:
+            imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = self.hands.process(imgRGB)
+            if results.multi_hand_landmarks:
+                print("có tay")
+                while cv2.waitKey(1) == ord("d"):
+                        print("có nhấn d ")
+                        for hand_landmarks in results.multi_hand_landmarks:
+                            index_finger_landmark = hand_landmarks.landmark[8]
+                            x, y = index_finger_landmark.x, index_finger_landmark.y
+                            cv2.circle(img, (150,1500), 1, (255, 255, 255), 1000)
+                            cv2.line(img,(0,0),(0,0),(255,0,0),10)
+                            print(x,y)
+            return frame
 
     def findHands(self, img):
         # Chuyển từ BGR thành RGB
@@ -15,7 +33,8 @@ class HandDetector:
 
         # Đưa vào thư viện mediapipe
         results = self.hands.process(imgRGB)
-        hand_landmarks = []
+        hand_lms = []
+        
 
         if results.multi_hand_landmarks:
             # Vẽ landmark cho các bàn tay
@@ -27,35 +46,42 @@ class HandDetector:
             for hand_landmarks in results.multi_hand_landmarks:
                 # Lấy vị trí của ngón trỏ
                 index_finger_landmark = hand_landmarks.landmark[8]
+                global x, y
                 x, y = index_finger_landmark.x, index_finger_landmark.y
-                print(x,y)
-        return img, hand_landmarks, x , y
+                
+        return img, hand_lms
+    
 
-    def draw_hand(self, x, y, Flippedframe):
-        cv2.circle(Flippedframe, (x, y), 5, (0, 0, 255), -1)
 
-# khởi tạo camera
+
+
+
+
+
+
+
+# Khởi tạo instance của lớp handDetector
+detector = handDetector()
+
+#khởi tạo camera
 cap = cv2.VideoCapture(0)
 
-# khởi tạo đối tượng HandDetector
-handDetector = HandDetector()
 
 while True :
+
     ret , frame = cap.read()
-    Flippedframe = cv2.flip(frame,1)
+    frame = cv2.flip(frame,1)
+    frame, hand_lms = detector.findHands(frame)
+    #show màn hình quay được 
+    frame = detector.draw(frame)
 
-    # tìm kiếm bàn tay trong ảnh
-    frame, hand_landmarks, x, y = handDetector.findHands(Flippedframe)
+    cv2.imshow("MediaPipe Camera Preview", frame)
 
-    # vẽ đường đi của ngón trỏ lên ảnh
-    handDetector.draw_hand(x, y, Flippedframe)
 
-    # show màn hình quay được 
-    cv2.imshow("MediaPipe Camera Preview", Flippedframe)
 
-    # nút tắt chương trình 
+
+    #nút tắt chương trình 
     if cv2.waitKey(1) == ord("q"):
         break
-
 cap.release()
 cv2.destroyAllWindows()
