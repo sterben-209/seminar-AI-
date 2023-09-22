@@ -1,6 +1,8 @@
 import mediapipe as mp
 import hand_detection_lib as handlib
 import cv2
+import math
+import numpy as np
 
 x = 0.0
 y = 0.0
@@ -17,13 +19,10 @@ class handDetector():
             results = self.hands.process(imgRGB)
             if results.multi_hand_landmarks:
                 print("có tay")
-                while cv2.waitKey(1) == ord("d"):
-                        print("có nhấn d ")
                         for hand_landmarks in results.multi_hand_landmarks:
                             index_finger_landmark = hand_landmarks.landmark[8]
-                            x, y = index_finger_landmark.x, index_finger_landmark.y
-                            cv2.circle(img, (150,1500), 1, (255, 255, 255), 1000)
-                            cv2.line(img,(0,0),(0,0),(255,0,0),10)
+                            x, y = index_finger_landmark.x*1280, index_finger_landmark.y*720
+                            cv2.circle(img, (x,y), 1, (255, 255, 255), 10)
                             print(x,y)
             return frame
 
@@ -74,7 +73,8 @@ while True :
     frame, hand_lms = detector.findHands(frame)
     #show màn hình quay được 
     frame = detector.draw(frame)
-
+    canvas = np.zeros((1280,720,3), np.uint8)
+    canvas[:,;,0] = 255
     cv2.imshow("MediaPipe Camera Preview", frame)
 
 
