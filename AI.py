@@ -12,7 +12,7 @@ class handDetector():
         self.mpDraw = mp.solutions.drawing_utils
 
 
-    def draw(self, img):
+    def draw(self, img, canva):
         while True:
             imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = self.hands.process(imgRGB)
@@ -21,6 +21,7 @@ class handDetector():
                         for hand_landmarks in results.multi_hand_landmarks:
                             index_finger_landmark = hand_landmarks.landmark[8]
                             x, y = index_finger_landmark.x*1280, index_finger_landmark.y*720
+                            cv2.circle(img, (x,y), 1, (255, 255, 255), 10)
                             cv2.circle(img, (x,y), 1, (255, 255, 255), 10)
                             print(x,y)
             return frame
@@ -71,7 +72,7 @@ while True :
     frame = cv2.flip(frame,1)
     frame, hand_lms = detector.findHands(frame)
     #show màn hình quay được 
-    frame = detector.draw(frame)
+    frame = detector.draw(frame,canvas)
     canvas = cv2.Canvas(1280,720,cv2.CV_8UC3,(0,0,0))
     cv2.addWeighted(canvas,0.5,frame,0.5,0,frame) 
     cv2.imshow("MediaPipe Camera Preview", frame)
