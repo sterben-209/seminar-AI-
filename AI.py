@@ -2,7 +2,6 @@ import mediapipe as mp
 import hand_detection_lib as handlib
 import cv2
 import math
-import numpy as np
 
 x = 0.0
 y = 0.0
@@ -73,8 +72,8 @@ while True :
     frame, hand_lms = detector.findHands(frame)
     #show màn hình quay được 
     frame = detector.draw(frame)
-    canvas = np.zeros((1280,720,3), np.uint8)
-    canvas[:,;,0] = 255
+    canvas = cv2.Canvas(1280,720,cv2.CV_8UC3,(0,0,0))
+    cv2.addWeighted(canvas,0.5,frame,0.5,0,frame) 
     cv2.imshow("MediaPipe Camera Preview", frame)
 
 
