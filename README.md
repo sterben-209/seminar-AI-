@@ -1,7 +1,8 @@
 hướng dẫn sử dụng 
 - install pip nếu chưa làm 
 - pip install mediapipe
-- pip install onpen-Cv
+- pip install opencv-python
+- pip install Pillow
 
   # drawing.py
   *lưu ý: drawing.py sử dụng cam mặc định của máy, nếu muốn sửa hãy chỉnh ở dòng cap = cv2.VideoCapture(0) 
