@@ -9,12 +9,12 @@ x = 0
 y = 0
 list8 = [] 
 list12 = []
-xanhduong = (255,0,0)
-xanhla = (0,255,0)
 do = (0,0,255)
+xanhla = (0,255,0)
+xanhduong = (255,0,0)
 den = (0,0,0)
 global current_color
-current_color= xanhduong
+current_color= do
 mau = []
 
 
@@ -36,10 +36,17 @@ class handDetector():
                 # print("có tay") 
                 for hand_landmarks in results.multi_hand_landmarks:
                     toa_do_dau_ngon_tro = hand_landmarks.landmark[8]
+                    toa_do_giua_ngon_tro = hand_landmarks.landmark[7]
                     toa_do_dau_ngon_giua = hand_landmarks.landmark[12]
+                    toa_do_giua_ngon_giua = hand_landmarks.landmark[11]
                     x8, y8 = toa_do_dau_ngon_tro.x*1280, toa_do_dau_ngon_tro.y*720
+                    x7, y7 = toa_do_giua_ngon_tro.x*1280,toa_do_giua_ngon_tro.y*720
                     x12, y12 = toa_do_dau_ngon_giua.x*1280, toa_do_dau_ngon_giua.y*720
+                    x11, y11 = toa_do_giua_ngon_giua.x*1280,toa_do_giua_ngon_giua.y*720
 
+
+                    if y7<y8 and y11<y12:
+                        draw.rectangle((0, 0, 1280, 720), fill= den)
                     cv2.circle(frame, (math.ceil(x8),math.ceil(y8)), 5,current_color, 10)    
                     list8.append((math.ceil(x8),math.ceil(y8)))
                     list12.append((math.ceil(x12),math.ceil(y12)))
@@ -48,8 +55,11 @@ class handDetector():
                         print(current_color)
                         for i  in range(1 , len(list8)) :
                             if list12[i][1] >= list8[i][1]:              
-                                print(mau[i])            
-                                draw.line((list8[i-1][0],list8[i-1][1],list8[i][0],list8[i][1]),fill = (current_color[2],current_color[1],current_color[0]))                  
+                                print(mau[i])  
+                                w = 5                                  
+                                if mau[i] == den : 
+                                    w = 100
+                                draw.line((list8[i-1][0],list8[i-1][1],list8[i][0],list8[i][1]),fill = (current_color[2],current_color[1],current_color[0]),width=w)                  
                                          
                         list8.pop(0)
                         list12.pop(0)
@@ -129,10 +139,10 @@ while True :
 
     canva = cv2.imread("canva.png")
     # detector.color_pic(frame)
-    cv2.rectangle(frame,(0,0),(320,30),xanhduong,-1)
-    cv2.rectangle(frame,(321,0),(640,30),xanhla,-1)
-    cv2.rectangle(frame,(641,0),(960,30),do,-1)
-    cv2.rectangle(frame,(961,0),(1280,30),den,-1)
+    cv2.rectangle(frame,(0,0),(320,30),(0,0,255),-1)
+    cv2.rectangle(frame,(321,0),(640,30),(0,255,0),-1)
+    cv2.rectangle(frame,(641,0),(960,30),(255,0,0),-1)
+    cv2.rectangle(frame,(961,0),(1280,30),(0,0,0),-1)
 
     frame = cv2.addWeighted(canva,1,frame,1,0)
     cv2.imshow("frame", frame)
