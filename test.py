@@ -7,7 +7,9 @@ hands = mpHands.Hands(static_image_mode=False, model_complexity=1, min_detection
 cap = cv2.VideoCapture(0)
 
 while True:
+    
     success, img = cap.read()
+    img = cv2.flip(img,1)
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     results = hands.process(imgRGB)
 
