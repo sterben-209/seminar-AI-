@@ -46,9 +46,9 @@ class handDetector():
                         if y11 > y12 : ngtp = 1
                         else : ngtp = 0
                         toa_do_dau_ngon_cai = hand_landmarks.landmark[4]
-                        toa_do_giua_ngon_cai = hand_landmarks.landmark[1]
-                        x4,x1 = toa_do_dau_ngon_cai.x*1280, toa_do_giua_ngon_cai.x*1280
-                        if x4 < x1 : nctp = 1
+                        toa_do_giua_ngon_cai = hand_landmarks.landmark[3]
+                        x4,x3 = toa_do_dau_ngon_cai.x*1280, toa_do_giua_ngon_cai.x*1280
+                        if x4 < x3 : nctp = 1
                         else : nctp = 0
                         toa_do_dau_ngon_aput = hand_landmarks.landmark[16]
                         toa_do_giua_ngon_aput = hand_landmarks.landmark[15]
@@ -60,9 +60,11 @@ class handDetector():
                         y20,y19 = toa_do_dau_ngon_ut.y*720, toa_do_giua_ngon_ut.y*720
                         if y19 > y20 : nutp = 1 
                         else: nutp = 0
-                    counttp = nctp + nttp + ngtp + nautp + nutp 
-                    print(counttp)
-                    return counttp
+                        return  nctp + nttp + ngtp + nautp + nutp 
+                    
+                    # print("x4tp= ",x4,"x1tp= ",x1 )
+
+                    # return counttp
 
                 
             def hamcounttt() :
@@ -82,9 +84,9 @@ class handDetector():
                         if y11 > y12 : ngtt = 1
                         else : ngtt = 0
                         toa_do_dau_ngon_cai = hand_landmarks.landmark[4]
-                        toa_do_giua_ngon_cai = hand_landmarks.landmark[1]
-                        x4,x1 = toa_do_dau_ngon_cai.x*1280, toa_do_giua_ngon_cai.x*1280
-                        if x4 > x1 : nctt = 1
+                        toa_do_giua_ngon_cai = hand_landmarks.landmark[3]
+                        x4,x3 = toa_do_dau_ngon_cai.x*1280, toa_do_giua_ngon_cai.x*1280
+                        if x4 > x3 : nctt = 1
                         else : nctt = 0
                         toa_do_dau_ngon_aput = hand_landmarks.landmark[16]
                         toa_do_giua_ngon_aput = hand_landmarks.landmark[15]
@@ -96,21 +98,31 @@ class handDetector():
                         y20,y19 = toa_do_dau_ngon_ut.y*720, toa_do_giua_ngon_ut.y*720
                         if y19 > y20 : nutt = 1 
                         else: nutt = 0
-                    counttt = nctt + nttt + ngtt + nautt + nutt
-                    print(counttt)
-                    return counttt
+                        return nctt + nttt + ngtt + nautt + nutt
+                    # print("x4tt= ",x4,"x1tt= ",x1 )
+                    # return counttt
             imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = self.hands.process(imgRGB)
             if results.multi_hand_landmarks:
                 for hand_landmarks in results.multi_hand_landmarks:
-                    toa_do_ngon_cai_phai = hand_landmarks.landmark[1]
-                    toa_do_ngon_ut_phai = hand_landmarks.landmark[17]
-                    if toa_do_ngon_cai_phai.x*1280 < toa_do_ngon_ut_phai.x*1280:
-                        hamcounttp()
-                    if toa_do_ngon_cai_phai.x*1280 > toa_do_ngon_ut_phai.x*1280:
-                        hamcounttt() 
-                count = counttt + counttp
-            cv2.putText(frame,str(counttp),(640,150),cv2.FONT_ITALIC,3,(0,255,0),10)
+                    if results.multi_hand_landmarks:
+                        for handLms in results.multi_hand_landmarks:
+                            for id, lm in enumerate(handLms.landmark):
+                                h, w, c = frame.shape
+                                cx, cy = int(lm.x * w), int(lm.y * h)
+                                if id == 0:
+                                    if cx < w/2:
+                                        counttt = hamcounttt()
+                                        cv2.putText(frame, 'left Hand' , (cx-50,cy-50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
+
+                                    else:
+                                        counttp = hamcounttp()   
+                                        cv2.putText(frame, 'right Hand' , (cx-50,cy-50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
+                print("left hand = ", counttt , " right hand = ",  counttp )
+            count = counttt + counttp
+                
+                # print(count)
+            cv2.putText(frame,str(count),(640,150),cv2.FONT_ITALIC,3,(0,255,0),10)
             return frame
 
 
