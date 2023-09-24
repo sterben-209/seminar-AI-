@@ -99,8 +99,16 @@ class handDetector():
                     counttt = nctt + nttt + ngtt + nautt + nutt
                     print(counttt)
                     return counttt
-
-                   
+            imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = self.hands.process(imgRGB)
+            if results.multi_hand_landmarks:
+                for hand_landmarks in results.multi_hand_landmarks:
+                    toa_do_ngon_cai_phai = hand_landmarks.landmark[1]
+                    toa_do_ngon_ut_phai = hand_landmarks.landmark[17]
+                    if toa_do_ngon_cai_phai.x*1280 < toa_do_ngon_ut_phai.x*1280:
+                        hamcounttp()
+                    if toa_do_ngon_cai_phai.x*1280 > toa_do_ngon_ut_phai.x*1280:
+                        hamcounttt() 
                 count = counttt + counttp
             cv2.putText(frame,str(counttp),(640,150),cv2.FONT_ITALIC,3,(0,255,0),10)
             return frame
