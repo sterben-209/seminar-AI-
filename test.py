@@ -1,29 +1,153 @@
-import cv2
-import mediapipe as mp
+import mediapipe as mp 
+import cv2 
 
-mpHands = mp.solutions.hands
-hands = mpHands.Hands(static_image_mode=False, model_complexity=1, min_detection_confidence=0.75, min_tracking_confidence=0.75, max_num_hands=2)
+class handDetector():
+    def __init__(self):
+        self.mpHands = mp.solutions.hands
+        self.hands = self.mpHands.Hands()
+        self.mpDraw = mp.solutions.drawing_utils
+    
+    def findHands(self, img):
+        # Chuyển từ BGR thành RGB
+        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-cap = cv2.VideoCapture(0)
+        # Đưa vào thư viện mediapipe
+        results = self.hands.process(imgRGB)
+        hand_lms = []
+        
+
+        if results.multi_hand_landmarks:
+            # Vẽ landmark cho các bàn tay      
+            for handlm in results.multi_hand_landmarks:
+                self.mpDraw.draw_landmarks(img, handlm, self.mpHands.HAND_CONNECTIONS)
+        return img, hand_lms
+    
+    def count(self,frame):
+        while True:
+            global counttt 
+            counttt = 0
+            global counttp
+            counttp = 0
+            count = 0
+            def hamcounttp():
+                # counttp = 0;
+                imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                results = self.hands.process(imgRGB)
+                if results.multi_hand_landmarks:
+                    for hand_landmarks in results.multi_hand_landmarks:
+                        toa_do_dau_ngon_tro = hand_landmarks.landmark[8]
+                        toa_do_giua_ngon_tro = hand_landmarks.landmark[7]
+                        y8,y7 = toa_do_dau_ngon_tro.y*720, toa_do_giua_ngon_tro.y*720
+                        if y7 > y8 : nttp = 1
+                        else : nttp = 0
+                        toa_do_dau_ngon_giua = hand_landmarks.landmark[12]
+                        toa_do_giua_ngon_giua = hand_landmarks.landmark[11]
+                        y12,y11 = toa_do_dau_ngon_giua.y*720, toa_do_giua_ngon_giua.y*720
+                        if y11 > y12 : ngtp = 1
+                        else : ngtp = 0
+                        toa_do_dau_ngon_cai = hand_landmarks.landmark[4]
+                        toa_do_giua_ngon_cai = hand_landmarks.landmark[3]
+                        x4,x3 = toa_do_dau_ngon_cai.x*1280, toa_do_giua_ngon_cai.x*1280
+                        if x4 < x3 : nctp = 1
+                        else : nctp = 0
+                        toa_do_dau_ngon_aput = hand_landmarks.landmark[16]
+                        toa_do_giua_ngon_aput = hand_landmarks.landmark[15]
+                        y16,y15 = toa_do_dau_ngon_aput.y*720, toa_do_giua_ngon_aput.y*720
+                        if y15 > y16 : nautp = 1
+                        else : nautp = 0
+                        toa_do_dau_ngon_ut = hand_landmarks.landmark[20]
+                        toa_do_giua_ngon_ut = hand_landmarks.landmark[19]
+                        y20,y19 = toa_do_dau_ngon_ut.y*720, toa_do_giua_ngon_ut.y*720
+                        if y19 > y20 : nutp = 1 
+                        else: nutp = 0
+                    counttp = nctp + nttp + ngtp + nautp + nutp 
+                    print(counttp)
+                    # print("x4tp= ",x4,"x1tp= ",x1 )
+
+                    return counttp
+
+                
+            def hamcounttt() :
+                # counttt = 0
+                imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                results = self.hands.process(imgRGB)
+                if results.multi_hand_landmarks:
+                    for hand_landmarks in results.multi_hand_landmarks:
+                        toa_do_dau_ngon_tro = hand_landmarks.landmark[8]
+                        toa_do_giua_ngon_tro = hand_landmarks.landmark[7]
+                        y8,y7 = toa_do_dau_ngon_tro.y*720, toa_do_giua_ngon_tro.y*720
+                        if y7 > y8 : nttt = 1
+                        else : nttt = 0
+                        toa_do_dau_ngon_giua = hand_landmarks.landmark[12]
+                        toa_do_giua_ngon_giua = hand_landmarks.landmark[11]
+                        y12,y11 = toa_do_dau_ngon_giua.y*720, toa_do_giua_ngon_giua.y*720
+                        if y11 > y12 : ngtt = 1
+                        else : ngtt = 0
+                        toa_do_dau_ngon_cai = hand_landmarks.landmark[4]
+                        toa_do_giua_ngon_cai = hand_landmarks.landmark[3]
+                        x4,x3 = toa_do_dau_ngon_cai.x*1280, toa_do_giua_ngon_cai.x*1280
+                        if x4 > x3 : nctt = 1
+                        else : nctt = 0
+                        toa_do_dau_ngon_aput = hand_landmarks.landmark[16]
+                        toa_do_giua_ngon_aput = hand_landmarks.landmark[15]
+                        y16,y15 = toa_do_dau_ngon_aput.y*720, toa_do_giua_ngon_aput.y*720
+                        if y15 > y16 : nautt = 1
+                        else : nautt = 0
+                        toa_do_dau_ngon_ut = hand_landmarks.landmark[20]
+                        toa_do_giua_ngon_ut = hand_landmarks.landmark[19]
+                        y20,y19 = toa_do_dau_ngon_ut.y*720, toa_do_giua_ngon_ut.y*720
+                        if y19 > y20 : nutt = 1 
+                        else: nutt = 0
+                    counttt = nctt + nttt + ngtt + nautt + nutt
+                    print(counttt,end=" ")
+                    # print("x4tt= ",x4,"x1tt= ",x1 )
+                    return counttt
+
+            imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = self.hands.process(imgRGB)
+            if results.multi_hand_landmarks:
+                for hand_landmarks in results.multi_hand_landmarks:
+                    if results.multi_hand_landmarks:
+                        for handLms in results.multi_hand_landmarks:
+                            for id, lm in enumerate(handLms.landmark):
+                                h, w, c = frame.shape
+                                cx, cy = int(lm.x * w), int(lm.y * h)
+                                if id == 0:
+                                    if cx < w/2:
+                                        hamcounttp()
+                                    else:
+                                        hamcounttt()                 
+                count = counttt + counttp
+                # print(count)
+            cv2.putText(frame,str(count),(640,150),cv2.FONT_ITALIC,3,(0,255,0),10)
+            return frame
+
+
+
+
+detector = handDetector()
+
+cam = cv2.VideoCapture(0)
+cam.set(3,1280)
+cam.set(4,720)
 
 while True:
+<<<<<<< HEAD
     
     success, img = cap.read()
     img = cv2.flip(img,1)
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     results = hands.process(imgRGB)
+=======
+    ret , frame = cam.read()
+    frame = cv2.flip(frame,1)
+>>>>>>> 6c122617d1409a03deec270cebc4b28546ec39f8
 
-    if results.multi_hand_landmarks:
-        for handLms in results.multi_hand_landmarks:
-            for id, lm in enumerate(handLms.landmark):
-                h, w, c = img.shape
-                cx, cy = int(lm.x * w), int(lm.y * h)
-                if id == 0:
-                    cv2.putText(img, 'Right Hand' if cx < w/2 else 'Left Hand', (cx-50,cy-50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
-
-    cv2.imshow("Image", img)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    
+    frame, hand_lms = detector.findHands(frame)   
+    detector.count(frame)
+    cv2.imshow("fingers count",frame )    
+    if cv2.waitKey(1) == ord("q"):
         break
-
-cap.release()
-cv2.destroyAllWindows()
+cam.release()
+cv2.destroyAllWindows
