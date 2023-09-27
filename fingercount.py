@@ -60,7 +60,7 @@ class handDetector():
                         y20,y19 = toa_do_dau_ngon_ut.y*720, toa_do_giua_ngon_ut.y*720
                         if y19 > y20 : nutp = 1 
                         else: nutp = 0
-                        return  nctp + nttp + ngtp + nautp + nutp 
+                        return  0 + nctp + nttp + ngtp + nautp + nutp 
                     
                     # print("x4tp= ",x4,"x1tp= ",x1 )
 
@@ -98,7 +98,7 @@ class handDetector():
                         y20,y19 = toa_do_dau_ngon_ut.y*720, toa_do_giua_ngon_ut.y*720
                         if y19 > y20 : nutt = 1 
                         else: nutt = 0
-                        return nctt + nttt + ngtt + nautt + nutt
+                        return 0 + nctt + nttt + ngtt + nautt + nutt
                     # print("x4tt= ",x4,"x1tt= ",x1 )
                     # return counttt
             imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -112,11 +112,11 @@ class handDetector():
                                 cx, cy = int(lm.x * w), int(lm.y * h)
                                 if id == 0:
                                     if cx < w/2:
-                                        counttt = hamcounttt()
+                                        counttt = 0 + hamcounttt()
                                         cv2.putText(frame, 'left Hand' , (cx-50,cy-50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
 
                                     else:
-                                        counttp = hamcounttp()   
+                                        counttp = 0 + hamcounttp()   
                                         cv2.putText(frame, 'right Hand' , (cx-50,cy-50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
                 print("left hand = ", counttt , " right hand = ",  counttp )
             count = counttt + counttp
